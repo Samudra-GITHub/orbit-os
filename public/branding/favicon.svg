@@ -1,0 +1,30 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Orbit OS">
+  <title>Orbit OS</title>
+  <defs>
+    <linearGradient id="favCoreGrad" x1="23" y1="23" x2="41" y2="41" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a78bfa" />
+      <stop offset="1" stop-color="#5eead4" />
+    </linearGradient>
+    <linearGradient id="favRingGrad" x1="5" y1="32" x2="59" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5eead4" />
+      <stop offset="1" stop-color="#8b5cf6" />
+    </linearGradient>
+  </defs>
+
+  <!-- Bolder strokes + larger core/satellite than logo-mark.svg, tuned for
+       legibility down to 16px browser-tab size. -->
+  <g transform="rotate(-22 32 32)">
+    <ellipse
+      cx="32" cy="32" rx="25" ry="13.5"
+      fill="none"
+      stroke="url(#favRingGrad)"
+      stroke-width="6.5"
+      stroke-linecap="round"
+      pathLength="100"
+      stroke-dasharray="76 24"
+    />
+    <circle cx="57" cy="32" r="4.4" fill="#5eead4" />
+  </g>
+
+  <circle cx="32" cy="32" r="9.5" fill="url(#favCoreGrad)" />
+</svg>

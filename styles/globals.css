@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-geist),
+    ui-sans-serif, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* Radius system — see styles/radius.ts */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 1.75rem;
+  --radius-4xl: 2rem;
+  --radius-full: 9999px;
+
+  /* Tier 1: literal tokens */
+  --color-ink-950: #050507;
+  --color-ink-900: #0a0a0f;
+  --color-ink-850: #0e0e16;
+  --color-ink-800: #13131d;
+  --color-ink-700: #1c1c29;
+  --color-mist-300: #a6a8c4;
+  --color-mist-400: #8385a8;
+  --color-mist-500: #64667f;
+
+  --color-violet-400: #a78bfa;
+  --color-violet-500: #8b5cf6;
+  --color-violet-600: #7c3aed;
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #6366f1;
+  --color-cyan-400: #5eead4;
+  --color-cyan-500: #2dd4bf;
+  --color-amber-400: #fbbf24;
+  --color-rose-400: #fb7185;
+  --color-void: #050505;
+
+  /* Tier 2: semantic tokens */
+  --color-surface: var(--color-ink-900);
+  --color-surface-raised: var(--color-ink-800);
+  --color-accent: var(--color-violet-500);
+  --color-accent-soft: var(--color-violet-400);
+  --color-positive: var(--color-cyan-400);
+  --color-warning: var(--color-amber-400);
+  --color-critical: var(--color-rose-400);
+
+  --shadow-glass: 0 1px 1px 0 rgba(255, 255, 255, 0.06) inset, 0 8px 32px -8px rgba(0, 0, 0, 0.6);
+  --shadow-glass-lg: 0 1px 1px 0 rgba(255, 255, 255, 0.08) inset, 0 24px 64px -16px rgba(0, 0, 0, 0.7);
+  --shadow-glow-accent: 0 0 24px -4px color-mix(in oklab, var(--color-violet-500) 60%, transparent);
+  --shadow-glow-accent-lg: 0 0 28px -6px color-mix(in oklab, var(--color-violet-500) 70%, transparent);
+  --shadow-glow-command: 0 8px 32px -4px color-mix(in oklab, var(--color-violet-500) 50%, transparent);
+  --shadow-glow-white: 0 0 24px -4px color-mix(in oklab, white 40%, transparent);
+  --shadow-glow-cyan: 0 0 24px -4px color-mix(in oklab, var(--color-cyan-500) 55%, transparent);
+  --shadow-glow-indigo: 0 0 24px -4px color-mix(in oklab, var(--color-indigo-500) 55%, transparent);
+
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
+  --animate-orbit-spin: orbit-spin 20s linear infinite;
+  --animate-breathe: breathe 3.5s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  @keyframes orbit-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: color-mix(in oklab, white 10%, transparent);
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: white;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-accent) 40%, transparent);
+    color: white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, white 14%, transparent);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-soft);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .text-gradient-accent {
+    background: linear-gradient(to right in oklch, var(--color-violet-400), var(--color-cyan-400));
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Tiny starfield — tiled radial-gradient dots, CSS only. */
+  .bg-cosmic-stars {
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, color-mix(in oklab, white 70%, transparent), transparent),
+      radial-gradient(1px 1px at 40% 70%, color-mix(in oklab, white 50%, transparent), transparent),
+      radial-gradient(1.5px 1.5px at 70% 40%, color-mix(in oklab, white 60%, transparent), transparent),
+      radial-gradient(1px 1px at 85% 85%, color-mix(in oklab, white 40%, transparent), transparent),
+      radial-gradient(1px 1px at 25% 90%, color-mix(in oklab, white 55%, transparent), transparent),
+      radial-gradient(1px 1px at 55% 15%, color-mix(in oklab, white 45%, transparent), transparent);
+    background-repeat: repeat;
+    background-size: 280px 280px;
+  }
+
+  /* Soft film-grain noise — layered CSS gradients, no image asset. */
+  .bg-cosmic-noise {
+    background-image:
+      repeating-linear-gradient(0deg, color-mix(in oklab, white 8%, transparent) 0px, transparent 1px, transparent 2px),
+      repeating-linear-gradient(90deg, color-mix(in oklab, white 6%, transparent) 0px, transparent 1px, transparent 2px);
+    background-size: 3px 3px;
+  }
+
+  /* Liquid Spatial Material — inner top highlight strip for GlassSurface. */
+  .glass-top-highlight {
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, white 45%, transparent),
+      transparent
+    );
+  }
+
+  /* Liquid Spatial Material — refraction sheen for GlassSurface. */
+  .glass-refraction {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, white 12%, transparent),
+      transparent
+    );
+  }
+
+  /* Cosmic background — mesh blend between the three glow hues. */
+  .bg-cosmic-mesh {
+    background-image:
+      radial-gradient(ellipse 60% 50% at 30% 20%, color-mix(in oklab, var(--color-violet-500) 18%, transparent), transparent),
+      radial-gradient(ellipse 55% 45% at 70% 60%, color-mix(in oklab, var(--color-indigo-500) 14%, transparent), transparent),
+      radial-gradient(ellipse 50% 50% at 50% 90%, color-mix(in oklab, var(--color-cyan-500) 12%, transparent), transparent);
+  }
+
+  /* Cosmic background — soft vignette to focus attention toward center. */
+  .bg-cosmic-vignette {
+    background: radial-gradient(
+      ellipse 80% 80% at 50% 45%,
+      transparent 55%,
+      color-mix(in oklab, var(--color-void) 70%, transparent) 100%
+    );
+  }
+
+  /* GlassSurface — pointer-reactive light, driven by --spot-x/--spot-y set on pointermove. */
+  .glass-spotlight {
+    background: radial-gradient(
+      220px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+      color-mix(in oklab, white 14%, transparent),
+      transparent 70%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

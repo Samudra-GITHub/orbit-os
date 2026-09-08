@@ -1,0 +1,37 @@
+<svg width="220" height="64" viewBox="0 0 220 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Orbit OS">
+  <title>Orbit OS</title>
+  <desc>Full lockup for light backgrounds — gradient mark with an ink wordmark.</desc>
+  <defs>
+    <linearGradient id="lockupCoreGrad" x1="23" y1="23" x2="41" y2="41" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a78bfa" />
+      <stop offset="1" stop-color="#5eead4" />
+    </linearGradient>
+    <linearGradient id="lockupRingGrad" x1="5" y1="32" x2="59" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5eead4" />
+      <stop offset="1" stop-color="#8b5cf6" />
+    </linearGradient>
+  </defs>
+
+  <g transform="rotate(-22 32 32)">
+    <ellipse
+      cx="32" cy="32" rx="25" ry="13"
+      fill="none"
+      stroke="url(#lockupRingGrad)"
+      stroke-width="5"
+      stroke-linecap="round"
+      pathLength="100"
+      stroke-dasharray="78 22"
+    />
+    <circle cx="57" cy="32" r="3.6" fill="#5eead4" />
+  </g>
+  <circle cx="32" cy="32" r="8" fill="url(#lockupCoreGrad)" />
+
+  <text
+    x="80" y="40"
+    font-family="Arial, Helvetica, sans-serif"
+    font-weight="700"
+    font-size="28"
+    letter-spacing="6"
+    fill="#0a0a0f"
+  >ORBIT</text>
+</svg>
