@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion, useReducedMotion, type Transition } from "framer-motion";
 
 /**
@@ -13,9 +14,11 @@ import { motion, useReducedMotion, type Transition } from "framer-motion";
  *
  * Only opacity/transform are animated (GPU-friendly — no filter/blur
  * animation), every loop is 30-40s, and everything is skipped under
- * prefers-reduced-motion.
+ * prefers-reduced-motion. Memoized — it takes no props and mounts once at
+ * the root, but every route's re-render would otherwise re-run this
+ * component's layered gradients for no visual change.
  */
-export function CosmicBackground() {
+function CosmicBackgroundImpl() {
   const reduceMotion = useReducedMotion();
 
   const drift = (duration: number, delay = 0): Transition =>
@@ -76,3 +79,5 @@ export function CosmicBackground() {
     </motion.div>
   );
 }
+
+export const CosmicBackground = memo(CosmicBackgroundImpl);

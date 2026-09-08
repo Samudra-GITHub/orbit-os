@@ -1,4 +1,3 @@
-import { AppShell } from "@/components/layout/AppShell";
 import { GreetingCard } from "@/components/widgets/GreetingCard";
 import { WeatherWidget } from "@/components/widgets/WeatherWidget";
 import { FocusTimer } from "@/components/widgets/FocusTimer";
@@ -15,34 +14,32 @@ import { AIInsightWidget } from "@/components/widgets/AIInsightWidget";
  */
 export default function DashboardPage() {
   return (
-    <AppShell>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-5 lg:grid-cols-12 lg:gap-6">
-        <GreetingCard />
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-5 lg:grid-cols-12 lg:gap-6">
+      <GreetingCard />
 
-        <div className="md:col-span-3 lg:col-span-5">
-          <WeatherWidget />
-        </div>
-        <div className="md:col-span-3 lg:col-span-7">
-          <FocusTimer />
-        </div>
-
-        <div className="md:col-span-3 lg:col-span-5">
-          <CalendarTimeline />
-        </div>
-        <div className="md:col-span-3 lg:col-span-7">
-          <FinanceSnapshot />
-        </div>
-
-        <div className="md:col-span-2 lg:col-span-4">
-          <MusicPlayer />
-        </div>
-        <div className="md:col-span-2 lg:col-span-4">
-          <HealthSnapshot />
-        </div>
-        <div className="md:col-span-2 lg:col-span-4">
-          <AIInsightWidget />
-        </div>
+      <div className="md:col-span-3 lg:col-span-5">
+        <WeatherWidget />
       </div>
-    </AppShell>
+      <div className="md:col-span-3 lg:col-span-7">
+        <FocusTimer />
+      </div>
+
+      <div className="md:col-span-3 lg:col-span-5">
+        <CalendarTimeline />
+      </div>
+      <div className="md:col-span-3 lg:col-span-7">
+        <FinanceSnapshot />
+      </div>
+
+      <div className="md:col-span-2 lg:col-span-4">
+        <MusicPlayer />
+      </div>
+      <div className="md:col-span-2 lg:col-span-4">
+        <HealthSnapshot />
+      </div>
+      <div className="md:col-span-2 lg:col-span-4">
+        <AIInsightWidget />
+      </div>
+    </div>
   );
 }

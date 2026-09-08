@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Droplets, Wind, Gauge, Sunrise, Sunset, CloudRain } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
@@ -18,6 +19,7 @@ interface WeatherWidgetViewProps {
 }
 
 export function WeatherWidgetView({ bundle }: WeatherWidgetViewProps) {
+  const router = useRouter();
   const reduceMotion = useReducedMotion();
   const { current, hourly, aqi } = bundle;
   const Icon = getWeatherIcon(current.condition, current.isDay);
@@ -33,8 +35,26 @@ export function WeatherWidgetView({ bundle }: WeatherWidgetViewProps) {
     { icon: CloudRain, label: `${Math.round((hourlySlice[0]?.pop ?? 0) * 100)}%` },
   ];
 
+  function openWeatherPage() {
+    router.push("/weather");
+  }
+
   return (
-    <Card index={1} variant="widget" className="flex flex-col gap-5 rounded-4xl">
+    <Card
+      index={1}
+      variant="widget"
+      role="link"
+      tabIndex={0}
+      aria-label="Open full weather page"
+      onClick={openWeatherPage}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openWeatherPage();
+        }
+      }}
+      className="flex cursor-pointer flex-col gap-5 rounded-4xl"
+    >
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-mist-400">

@@ -9,6 +9,7 @@ import { SearchInput } from "@/components/command/SearchInput";
 import { CommandItem } from "@/components/command/CommandItem";
 import { SuggestionChip } from "@/components/command/SuggestionChip";
 import { RecentCommand } from "@/components/command/RecentCommand";
+import { SearchEmptyState } from "@/components/empty-states/SearchEmptyState";
 import { useCommandPalette } from "@/lib/hooks/useCommandPalette";
 
 const listVariants: Variants = {
@@ -95,7 +96,7 @@ export function CommandCenter() {
                     ))}
                   </motion.ul>
                 ) : (
-                  <p className="px-3 py-6 text-center text-sm text-mist-500">No matching commands.</p>
+                  <SearchEmptyState query={query} className="py-6" />
                 )
               ) : (
                 <motion.div variants={listVariants} initial="hidden" animate="show" className="flex flex-col gap-4">

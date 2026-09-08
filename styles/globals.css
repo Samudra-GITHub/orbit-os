@@ -62,6 +62,7 @@
   --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
   --animate-orbit-spin: orbit-spin 20s linear infinite;
   --animate-breathe: breathe 3.5s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -78,6 +79,10 @@
   @keyframes breathe {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.06); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 }
 
@@ -188,6 +193,19 @@
       transparent 55%,
       color-mix(in oklab, var(--color-void) 70%, transparent) 100%
     );
+  }
+
+  /* Skeleton loading shimmer — a light band sweeping across a muted base. */
+  .skeleton-shimmer {
+    background-color: color-mix(in oklab, white 6%, transparent);
+    background-image: linear-gradient(
+      100deg,
+      transparent 30%,
+      color-mix(in oklab, white 10%, transparent) 50%,
+      transparent 70%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
   }
 
   /* GlassSurface — pointer-reactive light, driven by --spot-x/--spot-y set on pointermove. */

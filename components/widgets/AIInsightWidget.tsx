@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { CalendarClock, TrendingUp, Zap, CloudRain, type LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -22,6 +23,7 @@ const ROTATE_MS = 5000;
 
 export function AIInsightWidget() {
   const [index, setIndex] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % INSIGHTS.length), ROTATE_MS);
@@ -30,8 +32,26 @@ export function AIInsightWidget() {
 
   const insight = INSIGHTS[index];
 
+  function openAIWorkspace() {
+    router.push("/ai");
+  }
+
   return (
-    <Card index={7} variant="widget" className="flex h-full flex-col gap-4 rounded-4xl">
+    <Card
+      index={7}
+      variant="widget"
+      role="link"
+      tabIndex={0}
+      aria-label="Open AI Workspace"
+      onClick={openAIWorkspace}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openAIWorkspace();
+        }
+      }}
+      className="flex h-full cursor-pointer flex-col gap-4 rounded-4xl"
+    >
       <div className="flex items-center justify-between">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-mist-400">AI insight</p>
         <AIOrb size="sm" />

@@ -10,6 +10,8 @@ interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, "onDrag" | "onD
   interactive?: boolean;
   /** Stagger index, used to offset the mount animation. */
   index?: number;
+  /** Shared-element id for cross-page morph transitions (framer-motion layoutId). */
+  layoutId?: string;
   children?: ReactNode;
 }
 

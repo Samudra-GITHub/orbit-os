@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { SystemProvider } from "@/components/providers/SystemProvider";
 import { CosmicBackground } from "@/components/motion/CosmicBackground";
 import "../styles/globals.css";
 
@@ -48,7 +48,7 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
         <CosmicBackground />
-        <ThemeProvider>{children}</ThemeProvider>
+        <SystemProvider>{children}</SystemProvider>
       </body>
     </html>
   );

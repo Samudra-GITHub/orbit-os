@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { FileText, Image as ImageIcon, FileSpreadsheet, File as FileIcon, FolderOpen } from "lucide-react";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { FileKind, FileNode } from "@/lib/constants/workspace";
 
 const KIND_ICON: Record<FileKind, typeof FileText> = {
@@ -19,10 +20,11 @@ interface FilePreviewProps {
 export function FilePreview({ file }: FilePreviewProps) {
   if (!file) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-mist-500">
-        <FolderOpen className="h-8 w-8" strokeWidth={1.5} />
-        <p className="text-sm">Select a file to preview it</p>
-      </div>
+      <EmptyState
+        icon={FolderOpen}
+        title="No file selected"
+        description="Choose a file from the list to preview its contents here."
+      />
     );
   }
 

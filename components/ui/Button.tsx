@@ -1,17 +1,25 @@
 "use client";
 
-import { forwardRef, useRef } from "react";
-import { motion, useMotionValue, useSpring, type HTMLMotionProps } from "framer-motion";
+import { forwardRef, useRef, useState, type ReactNode } from "react";
+import { motion, useMotionValue, useSpring, useReducedMotion, AnimatePresence, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "icon";
 export type ButtonSize = "sm" | "md" | "lg";
 
-interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref"> {
+interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref" | "children"> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   /** Magnetic cursor-follow on hover. Defaults on for primary/icon, off otherwise. */
   magnetic?: boolean;
+  children?: ReactNode;
+}
+
+interface Ripple {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
@@ -37,15 +45,18 @@ const iconSizeStyles: Record<ButtonSize, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = "primary", size = "md", magnetic, className, children, ...props },
+  { variant = "primary", size = "md", magnetic, className, children, onClick, ...props },
   forwardedRef
 ) {
   const isMagnetic = magnetic ?? (variant === "primary" || variant === "icon");
+  const reduceMotion = useReducedMotion();
   const innerRef = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const springX = useSpring(x, { stiffness: 300, damping: 20, mass: 0.5 });
   const springY = useSpring(y, { stiffness: 300, damping: 20, mass: 0.5 });
+  const [ripples, setRipples] = useState<Ripple[]>([]);
+  const rippleId = useRef(0);
 
   function setRefs(node: HTMLButtonElement | null) {
     innerRef.current = node;
@@ -67,22 +78,55 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     y.set(0);
   }
 
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    if (!reduceMotion) {
+      const el = innerRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 1.8;
+        rippleId.current += 1;
+        const id = rippleId.current;
+        setRipples((prev) => [
+          ...prev,
+          { id, x: e.clientX - rect.left - size / 2, y: e.clientY - rect.top - size / 2, size },
+        ]);
+        setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 600);
+      }
+    }
+    onClick?.(e);
+  }
+
   return (
     <motion.button
       ref={setRefs}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
       style={isMagnetic ? { x: springX, y: springY } : undefined}
       whileTap={{ scale: 0.96 }}
       transition={{ type: "spring", stiffness: 260, damping: 22 }}
       className={cn(
-        "relative inline-flex items-center justify-center font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400 disabled:pointer-events-none disabled:opacity-40",
+        "relative inline-flex items-center justify-center overflow-hidden font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400 disabled:pointer-events-none disabled:opacity-40",
         variant === "icon" ? iconSizeStyles[size] : sizeStyles[size],
         variantStyles[variant],
         className
       )}
       {...props}
     >
+      <AnimatePresence>
+        {ripples.map((r) => (
+          <motion.span
+            key={r.id}
+            aria-hidden
+            initial={{ opacity: 0.5, scale: 0 }}
+            animate={{ opacity: 0, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="pointer-events-none absolute rounded-full bg-white/40"
+            style={{ left: r.x, top: r.y, width: r.size, height: r.size }}
+          />
+        ))}
+      </AnimatePresence>
       {children}
     </motion.button>
   );
