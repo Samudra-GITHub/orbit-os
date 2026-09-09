@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { MotionProvider } from "@/components/effects/MotionProvider";
+import { ThemeProvider } from "@/lib/theme";
 import { NotificationProvider } from "@/components/providers/NotificationProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 
@@ -11,9 +12,11 @@ import { ToastProvider } from "@/components/providers/ToastProvider";
 export function SystemProvider({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
-      <NotificationProvider>
-        <ToastProvider>{children}</ToastProvider>
-      </NotificationProvider>
+      <MotionProvider>
+        <NotificationProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </NotificationProvider>
+      </MotionProvider>
     </ThemeProvider>
   );
 }

@@ -34,19 +34,21 @@ export function Toast({ title, description, variant, onDismiss }: ToastProps) {
       transition={{ type: "spring", stiffness: 340, damping: 30 }}
       className="pointer-events-auto w-full max-w-sm"
     >
-      <GlassSurface intensity="overlay" interactive={false} className="flex items-start gap-3 rounded-3xl p-4">
-        <meta.icon className={cn("mt-0.5 h-4 w-4 shrink-0", meta.className)} strokeWidth={2} />
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-white">{title}</p>
-          {description && <p className="mt-0.5 text-xs text-mist-400">{description}</p>}
+      <GlassSurface intensity="overlay" interactive={false} className="rounded-3xl p-4">
+        <div className="flex items-start gap-3">
+          <meta.icon className={cn("mt-0.5 h-4 w-4 shrink-0", meta.className)} strokeWidth={2} />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-white">{title}</p>
+            {description && <p className="mt-0.5 text-xs text-mist-400">{description}</p>}
+          </div>
+          <button
+            onClick={onDismiss}
+            aria-label="Dismiss notification"
+            className="shrink-0 rounded-md text-mist-500 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
-        <button
-          onClick={onDismiss}
-          aria-label="Dismiss notification"
-          className="shrink-0 rounded-md text-mist-500 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
-        >
-          <X className="h-3.5 w-3.5" />
-        </button>
       </GlassSurface>
     </motion.div>
   );

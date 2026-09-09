@@ -3,7 +3,9 @@ import { fontFamily, fontSize, fontWeight, lineHeight, letterSpacing } from "@/s
 import { spacing, layout } from "@/styles/spacing";
 import { radius } from "@/styles/radius";
 import { shadows } from "@/styles/shadows";
-import { spring, duration, easing, magnetic } from "@/styles/motion";
+import { springs, magneticStrength } from "@/lib/motion/springs";
+import { durations } from "@/lib/motion/durations";
+import { easings } from "@/lib/motion/easings";
 
 export const THEME_MODE = "dark" as const;
 
@@ -16,7 +18,7 @@ export const theme = {
   layout,
   radius,
   shadows,
-  motion: { spring, duration, easing, magnetic },
+  motion: { springs, durations, easings, magneticStrength },
 } as const;
 
 export type Theme = typeof theme;

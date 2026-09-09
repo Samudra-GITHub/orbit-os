@@ -1,8 +1,11 @@
 "use client";
 
-import { forwardRef, useRef, useState, type ReactNode } from "react";
-import { motion, useMotionValue, useSpring, useReducedMotion, AnimatePresence, type HTMLMotionProps } from "framer-motion";
+import { forwardRef, useRef, type ReactNode } from "react";
+import { motion, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { springs } from "@/lib/motion/springs";
+import { useMagnetic } from "@/components/effects/MagneticButton";
+import { useGlassRipple, GlassRipple } from "@/components/effects/GlassRipple";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "icon";
 export type ButtonSize = "sm" | "md" | "lg";
@@ -13,13 +16,6 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref" | "children"
   /** Magnetic cursor-follow on hover. Defaults on for primary/icon, off otherwise. */
   magnetic?: boolean;
   children?: ReactNode;
-}
-
-interface Ripple {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
@@ -44,19 +40,17 @@ const iconSizeStyles: Record<ButtonSize, string> = {
   lg: "h-12 w-12 rounded-2xl",
 };
 
+/** Composes Orbit's shared magnetic-hover and glass-ripple effects
+ *  (`components/effects/`) rather than defining its own copies — any
+ *  future tuning to either lands here automatically. */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = "primary", size = "md", magnetic, className, children, onClick, ...props },
   forwardedRef
 ) {
   const isMagnetic = magnetic ?? (variant === "primary" || variant === "icon");
-  const reduceMotion = useReducedMotion();
   const innerRef = useRef<HTMLButtonElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 300, damping: 20, mass: 0.5 });
-  const springY = useSpring(y, { stiffness: 300, damping: 20, mass: 0.5 });
-  const [ripples, setRipples] = useState<Ripple[]>([]);
-  const rippleId = useRef(0);
+  const { style, onMouseMove, onMouseLeave } = useMagnetic(innerRef);
+  const { ripples, trigger } = useGlassRipple();
 
   function setRefs(node: HTMLButtonElement | null) {
     innerRef.current = node;
@@ -64,47 +58,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     else if (forwardedRef) forwardedRef.current = node;
   }
 
-  function handleMouseMove(e: React.MouseEvent<HTMLButtonElement>) {
-    if (!isMagnetic) return;
-    const el = innerRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    x.set((e.clientX - (rect.left + rect.width / 2)) * 0.3);
-    y.set((e.clientY - (rect.top + rect.height / 2)) * 0.3);
-  }
-
-  function handleMouseLeave() {
-    x.set(0);
-    y.set(0);
-  }
-
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
-    if (!reduceMotion) {
-      const el = innerRef.current;
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height) * 1.8;
-        rippleId.current += 1;
-        const id = rippleId.current;
-        setRipples((prev) => [
-          ...prev,
-          { id, x: e.clientX - rect.left - size / 2, y: e.clientY - rect.top - size / 2, size },
-        ]);
-        setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 600);
-      }
-    }
+    if (innerRef.current) trigger(innerRef.current, e.clientX, e.clientY);
     onClick?.(e);
   }
 
   return (
     <motion.button
       ref={setRefs}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={isMagnetic ? onMouseMove : undefined}
+      onMouseLeave={isMagnetic ? onMouseLeave : undefined}
       onClick={handleClick}
-      style={isMagnetic ? { x: springX, y: springY } : undefined}
+      style={isMagnetic ? style : undefined}
       whileTap={{ scale: 0.96 }}
-      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      transition={springs.default}
       className={cn(
         "relative inline-flex items-center justify-center overflow-hidden font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400 disabled:pointer-events-none disabled:opacity-40",
         variant === "icon" ? iconSizeStyles[size] : sizeStyles[size],
@@ -113,20 +80,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       )}
       {...props}
     >
-      <AnimatePresence>
-        {ripples.map((r) => (
-          <motion.span
-            key={r.id}
-            aria-hidden
-            initial={{ opacity: 0.5, scale: 0 }}
-            animate={{ opacity: 0, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="pointer-events-none absolute rounded-full bg-white/40"
-            style={{ left: r.x, top: r.y, width: r.size, height: r.size }}
-          />
-        ))}
-      </AnimatePresence>
+      <GlassRipple ripples={ripples} />
       {children}
     </motion.button>
   );

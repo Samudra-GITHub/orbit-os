@@ -2,6 +2,8 @@
 
 import { memo } from "react";
 import { motion, useReducedMotion, type Transition } from "framer-motion";
+import { useTheme } from "@/lib/theme";
+import { scaleDrift } from "@/lib/utils";
 
 /**
  * Fixed full-screen cosmic backdrop, layered behind AppShell:
@@ -14,12 +16,13 @@ import { motion, useReducedMotion, type Transition } from "framer-motion";
  *
  * Only opacity/transform are animated (GPU-friendly — no filter/blur
  * animation), every loop is 30-40s, and everything is skipped under
- * prefers-reduced-motion. Memoized — it takes no props and mounts once at
- * the root, but every route's re-render would otherwise re-run this
- * component's layered gradients for no visual change.
+ * prefers-reduced-motion. The three glows' colors read `--wallpaper-hue-*`
+ * (Settings > Appearance's Wallpaper gallery) and their drift amplitude
+ * scales with `animationIntensity` (Settings > Accessibility).
  */
 function CosmicBackgroundImpl() {
   const reduceMotion = useReducedMotion();
+  const { animationIntensity } = useTheme();
 
   const drift = (duration: number, delay = 0): Transition =>
     reduceMotion
@@ -36,31 +39,49 @@ function CosmicBackgroundImpl() {
     >
       {/* Layer 2 — purple glow, top-center */}
       <motion.div
-        className="absolute left-1/2 top-[-15%] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-violet-600/25 blur-[120px]"
+        className="absolute left-1/2 top-[-15%] h-[620px] w-[620px] -translate-x-1/2 rounded-full blur-[120px] transition-[background-color] duration-1000 ease-out"
+        style={{ backgroundColor: "color-mix(in oklab, var(--wallpaper-hue-1) 25%, transparent)" }}
         animate={
           reduceMotion
             ? undefined
-            : { x: [0, 30, -20, 0], y: [0, 20, -10, 0], scale: [1, 1.06, 0.97, 1], opacity: [0.9, 1, 0.85, 0.9] }
+            : {
+                x: scaleDrift([0, 30, -20, 0], animationIntensity),
+                y: scaleDrift([0, 20, -10, 0], animationIntensity),
+                scale: scaleDrift([1, 1.06, 0.97, 1], animationIntensity, 1),
+                opacity: [0.9, 1, 0.85, 0.9],
+              }
         }
         transition={drift(34, 0)}
       />
       {/* Layer 2 — indigo glow, left */}
       <motion.div
-        className="absolute left-[-15%] top-[35%] h-[520px] w-[520px] rounded-full bg-indigo-500/20 blur-[120px]"
+        className="absolute left-[-15%] top-[35%] h-[520px] w-[520px] rounded-full blur-[120px] transition-[background-color] duration-1000 ease-out"
+        style={{ backgroundColor: "color-mix(in oklab, var(--wallpaper-hue-2) 20%, transparent)" }}
         animate={
           reduceMotion
             ? undefined
-            : { x: [0, 40, -20, 0], y: [0, -25, 15, 0], scale: [1, 0.95, 1.05, 1], opacity: [0.85, 1, 0.8, 0.85] }
+            : {
+                x: scaleDrift([0, 40, -20, 0], animationIntensity),
+                y: scaleDrift([0, -25, 15, 0], animationIntensity),
+                scale: scaleDrift([1, 0.95, 1.05, 1], animationIntensity, 1),
+                opacity: [0.85, 1, 0.8, 0.85],
+              }
         }
         transition={drift(38, 4)}
       />
       {/* Layer 2 — cyan glow, bottom-right */}
       <motion.div
-        className="absolute bottom-[-15%] right-[-10%] h-[560px] w-[560px] rounded-full bg-cyan-500/20 blur-[130px]"
+        className="absolute bottom-[-15%] right-[-10%] h-[560px] w-[560px] rounded-full blur-[130px] transition-[background-color] duration-1000 ease-out"
+        style={{ backgroundColor: "color-mix(in oklab, var(--wallpaper-hue-3) 20%, transparent)" }}
         animate={
           reduceMotion
             ? undefined
-            : { x: [0, -30, 20, 0], y: [0, -20, 25, 0], scale: [1, 1.05, 0.96, 1], opacity: [0.8, 0.95, 0.85, 0.8] }
+            : {
+                x: scaleDrift([0, -30, 20, 0], animationIntensity),
+                y: scaleDrift([0, -20, 25, 0], animationIntensity),
+                scale: scaleDrift([1, 1.05, 0.96, 1], animationIntensity, 1),
+                opacity: [0.8, 0.95, 0.85, 0.8],
+              }
         }
         transition={drift(36, 8)}
       />

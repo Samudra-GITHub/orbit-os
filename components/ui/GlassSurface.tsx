@@ -1,9 +1,11 @@
 "use client";
 
-import { forwardRef, useRef, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
-import { motion, useReducedMotion, type HTMLMotionProps, type Variants } from "framer-motion";
+import { forwardRef, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { motion, useReducedMotion, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { spring } from "@/styles/motion";
+import { springs } from "@/lib/motion/springs";
+import { fadeFloatIn } from "@/lib/motion/variants";
+import { updateSpotlight, clearSpotlight, CursorSpotlight } from "@/components/effects/CursorSpotlight";
 
 export type GlassIntensity = "subtle" | "default" | "raised" | "overlay";
 
@@ -19,27 +21,26 @@ interface GlassSurfaceProps extends Omit<HTMLMotionProps<"div">, "ref" | "childr
   children?: ReactNode;
 }
 
-// Background opacity ~16%, backdrop blur 32-48px per the Liquid Spatial
-// Material spec, tuned slightly per intensity for visual hierarchy.
+// Border/shadow per intensity — background and blur are handled separately
+// below via CSS custom properties, so Settings > Appearance's Glass
+// Intensity slider can scale them globally without touching this file again.
 const intensityStyles: Record<GlassIntensity, string> = {
-  subtle:
-    "border-white/[0.08] bg-white/[0.08] backdrop-blur-[28px] hover:backdrop-blur-[32px] backdrop-saturate-150",
-  default:
-    "border-white/10 bg-white/[0.16] shadow-glass backdrop-blur-[32px] hover:backdrop-blur-[40px] backdrop-saturate-150 hover:border-white/20",
-  raised:
-    "border-white/[0.16] bg-white/[0.18] shadow-glass-lg backdrop-blur-[40px] hover:backdrop-blur-[48px] backdrop-saturate-150 hover:border-white/25",
-  overlay:
-    "border-white/[0.14] bg-white/[0.14] shadow-glass-lg backdrop-blur-[48px] backdrop-saturate-150",
+  subtle: "border-white/[0.08]",
+  default: "border-white/10 shadow-glass hover:border-white/20",
+  raised: "border-white/[0.16] shadow-glass-lg hover:border-white/25",
+  overlay: "border-white/[0.14] shadow-glass-lg",
 };
 
-export const glassEntrance: Variants = {
-  hidden: { opacity: 0, y: 28, scale: 0.97 },
-  show: (i: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { ...spring.default, delay: 0.08 * i },
-  }),
+// Background opacity ~16%, backdrop blur 32-48px per the Liquid Spatial
+// Material spec, tuned slightly per intensity for visual hierarchy. These
+// feed `.group\/glass` in globals.css, which multiplies them by the global
+// `--glass-intensity` (and `--glass-contrast-boost`) — at the defaults
+// (1, 1) this renders pixel-identical to the old static Tailwind classes.
+const intensityVars: Record<GlassIntensity, CSSProperties> = {
+  subtle: { "--glass-bg-base": "8%", "--glass-blur-base": "28px", "--glass-blur-hover-base": "32px" } as CSSProperties,
+  default: { "--glass-bg-base": "16%", "--glass-blur-base": "32px", "--glass-blur-hover-base": "40px" } as CSSProperties,
+  raised: { "--glass-bg-base": "18%", "--glass-blur-base": "40px", "--glass-blur-hover-base": "48px" } as CSSProperties,
+  overlay: { "--glass-bg-base": "14%", "--glass-blur-base": "48px", "--glass-blur-hover-base": "48px" } as CSSProperties,
 };
 
 export const GlassSurface = forwardRef<HTMLDivElement, GlassSurfaceProps>(function GlassSurface(
@@ -54,6 +55,7 @@ export const GlassSurface = forwardRef<HTMLDivElement, GlassSurfaceProps>(functi
     initial,
     animate,
     custom,
+    style,
     onPointerMove,
     onPointerLeave,
     ...props
@@ -69,22 +71,13 @@ export const GlassSurface = forwardRef<HTMLDivElement, GlassSurfaceProps>(functi
     else if (forwardedRef) forwardedRef.current = node;
   }
 
-  // Cursor Spotlight: every glass surface tracks the pointer locally via
-  // CSS custom properties (no state, no heavy libraries) and fades a soft
-  // radial light toward it, blended with the material.
   function handlePointerMove(e: ReactPointerEvent<HTMLDivElement>) {
-    const el = localRef.current;
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      el.style.setProperty("--spot-x", `${e.clientX - rect.left}px`);
-      el.style.setProperty("--spot-y", `${e.clientY - rect.top}px`);
-      el.style.setProperty("--spot-opacity", "1");
-    }
+    if (localRef.current) updateSpotlight(localRef.current, e.clientX, e.clientY);
     onPointerMove?.(e);
   }
 
   function handlePointerLeave(e: ReactPointerEvent<HTMLDivElement>) {
-    localRef.current?.style.setProperty("--spot-opacity", "0");
+    if (localRef.current) clearSpotlight(localRef.current);
     onPointerLeave?.(e);
   }
 
@@ -94,7 +87,7 @@ export const GlassSurface = forwardRef<HTMLDivElement, GlassSurfaceProps>(functi
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       custom={custom ?? index}
-      variants={animateEntrance ? (variants ?? glassEntrance) : variants}
+      variants={animateEntrance ? (variants ?? fadeFloatIn) : variants}
       initial={initial ?? (animateEntrance && !reduceMotion ? "hidden" : false)}
       animate={animate ?? (animateEntrance ? "show" : false)}
       whileHover={
@@ -105,16 +98,17 @@ export const GlassSurface = forwardRef<HTMLDivElement, GlassSurfaceProps>(functi
                 y: -6,
                 scale: 1.015,
                 boxShadow: "var(--shadow-glass-lg), var(--shadow-glow-accent), var(--shadow-glow-cyan)",
-                transition: { ...spring.default },
+                transition: { ...springs.default },
               }
           : undefined
       }
       className={cn(
-        "group/glass relative overflow-hidden rounded-3xl border transition-[backdrop-filter,border-color,box-shadow]",
+        "group/glass relative overflow-hidden rounded-3xl border transition-[backdrop-filter,background-color,border-color,box-shadow] duration-500",
         intensityStyles[intensity],
         interactive && "cursor-default",
         className
       )}
+      style={{ ...intensityVars[intensity], ...style }}
       {...props}
     >
       {/* inner top highlight — specular edge */}
@@ -136,11 +130,7 @@ export const GlassSurface = forwardRef<HTMLDivElement, GlassSurfaceProps>(functi
       <span aria-hidden className="bg-cosmic-noise pointer-events-none absolute inset-0 opacity-[0.02] mix-blend-overlay" />
 
       {/* cursor spotlight — follows the pointer locally on this surface */}
-      <span
-        aria-hidden
-        className="glass-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
-        style={{ opacity: "var(--spot-opacity, 0)" }}
-      />
+      <CursorSpotlight />
 
       {/* animated ambient glow on hover */}
       {interactive && (

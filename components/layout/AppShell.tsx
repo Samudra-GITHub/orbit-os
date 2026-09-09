@@ -1,8 +1,11 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
 import { CommandCenter } from "@/components/command/CommandCenter";
 import { CursorSpotlight } from "@/components/ui/CursorSpotlight";
+import { useTheme } from "@/lib/theme";
 
 interface AppShellProps {
   children: ReactNode;
@@ -14,9 +17,11 @@ interface AppShellProps {
  * command palette trigger.
  */
 export function AppShell({ children }: AppShellProps) {
+  const { cursorSpotlight } = useTheme();
+
   return (
     <div className="min-h-dvh">
-      <CursorSpotlight />
+      {cursorSpotlight && <CursorSpotlight />}
       <Sidebar />
       <div className="flex min-h-dvh flex-col md:pl-[104px]">
         <Topbar />

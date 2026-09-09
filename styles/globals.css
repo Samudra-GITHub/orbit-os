@@ -88,6 +88,43 @@
 
 :root {
   color-scheme: dark;
+
+  /* Wallpaper hues — CosmicBackground's three orbs read these instead of
+     hardcoded colors, so Settings > Appearance can swap them at runtime.
+     Defaults match the original "Cosmos" wallpaper exactly (no first-paint
+     flash before ThemeProvider's effect applies a saved selection). */
+  --wallpaper-hue-1: #7c3aed;
+  --wallpaper-hue-2: #6366f1;
+  --wallpaper-hue-3: #2dd4bf;
+
+  /* Glass intensity — a multiplier GlassSurface's blur/opacity read via
+     calc(), set by Settings > Appearance's slider. 1 = default look. */
+  --glass-intensity: 1;
+  --glass-contrast-boost: 1;
+}
+
+:root[data-contrast="high"] {
+  --glass-contrast-boost: 1.6;
+  --color-mist-300: #d3d4ea;
+  --color-mist-400: #b3b5d2;
+  --color-mist-500: #9294b8;
+}
+
+:root[data-contrast="high"] * {
+  border-color: color-mix(in oklab, white 24%, transparent);
+}
+
+:root[data-reduce-motion="true"] *,
+:root[data-reduce-motion="true"] *::before,
+:root[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+:root[data-cursor-spotlight="off"] .glass-spotlight {
+  opacity: 0 !important;
 }
 
 @layer base {
@@ -104,6 +141,10 @@
     color: white;
     min-height: 100dvh;
     overflow-x: hidden;
+    /* Crossfades Settings > Appearance's Theme switch (--color-surface
+       derives from the ink tokens ThemeProvider rewrites) instead of
+       snapping to the new base color. */
+    transition: background-color 700ms ease;
   }
 
   ::selection {
@@ -215,6 +256,29 @@
       color-mix(in oklab, white 14%, transparent),
       transparent 70%
     );
+  }
+
+  /* GlassSurface's blur + background — each intensity variant sets its own
+     --glass-bg-base/--glass-blur-base/--glass-blur-hover-base inline, and
+     this single rule scales all of them by the global --glass-intensity
+     (Settings > Appearance's slider) and --glass-contrast-boost (Settings >
+     Accessibility's High Contrast toggle). At the defaults (intensity 1,
+     boost 1) this renders identically to the old per-variant Tailwind
+     arbitrary-value classes it replaces. */
+  .group\/glass {
+    background-color: color-mix(
+      in oklab,
+      white calc(var(--glass-bg-base, 16%) * var(--glass-intensity, 1) * var(--glass-contrast-boost, 1)),
+      transparent
+    );
+    backdrop-filter: blur(calc(var(--glass-blur-base, 32px) * var(--glass-intensity, 1))) saturate(150%);
+    -webkit-backdrop-filter: blur(calc(var(--glass-blur-base, 32px) * var(--glass-intensity, 1))) saturate(150%);
+  }
+  .group\/glass:hover {
+    backdrop-filter: blur(calc(var(--glass-blur-hover-base, var(--glass-blur-base, 32px)) * var(--glass-intensity, 1)))
+      saturate(150%);
+    -webkit-backdrop-filter: blur(calc(var(--glass-blur-hover-base, var(--glass-blur-base, 32px)) * var(--glass-intensity, 1)))
+      saturate(150%);
   }
 }
 

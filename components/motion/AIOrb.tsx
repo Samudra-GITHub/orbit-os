@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, scaleDrift } from "@/lib/utils";
+import { aiOrbHalo, aiOrbRing } from "@/lib/motion/variants";
+import { useTheme } from "@/lib/theme";
 
 export type AIOrbSize = "sm" | "md" | "lg";
 
-/** Only "idle" is implemented visually — the rest are reserved for when
- *  Orbit gains real voice/AI interaction states. */
+/** `idle` is the state used by every current Orbit surface; `listening` /
+ *  `thinking` / `success` are wired up (see `lib/motion/variants.ts`) and
+ *  ready for when Orbit gets real voice/AI interaction to drive them. */
 export type AIOrbState = "idle" | "listening" | "thinking" | "success";
 
 interface AIOrbProps {
@@ -30,14 +33,15 @@ const iconSizeStyles: Record<AIOrbSize, string> = {
 };
 
 /**
- * The Orbit AI presence — breathing glow halo, slow rotating ring, gentle
- * vertical float, and a ripple + brighter glow on hover. All loops are
- * skipped under prefers-reduced-motion. `state` is prepared for future
- * listening/thinking/success visuals; only "idle" renders today.
+ * The Orbit AI presence. Halo and ring motion come from the shared
+ * `aiOrbHalo`/`aiOrbRing` variants keyed by `state` — Orbit's motion
+ * engine is the single place those four states are defined, so a future
+ * voice feature just needs to pass `state="listening"` etc. rather than
+ * teach this component new animation.
  */
 export function AIOrb({ size = "md", state = "idle", className }: AIOrbProps) {
-  void state;
   const reduceMotion = useReducedMotion();
+  const { animationIntensity } = useTheme();
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -45,19 +49,15 @@ export function AIOrb({ size = "md", state = "idle", className }: AIOrbProps) {
       className={cn("relative flex shrink-0 items-center justify-center", sizeStyles[size], className)}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
+      animate={reduceMotion ? undefined : { y: scaleDrift([0, -6, 0], animationIntensity) }}
       transition={reduceMotion ? undefined : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
     >
-      {/* breathing glow halo */}
+      {/* breathing glow halo — state-driven */}
       <motion.span
         aria-hidden
         className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/50 to-cyan-400/50 blur-md"
-        animate={
-          reduceMotion
-            ? undefined
-            : { scale: hovered ? [1.15, 1.3, 1.15] : [0.98, 1.04, 0.98], opacity: [0.6, 1, 0.6] }
-        }
-        transition={reduceMotion ? undefined : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        variants={aiOrbHalo}
+        animate={reduceMotion ? undefined : hovered && state === "idle" ? "listening" : state}
       />
 
       {/* hover ripple */}
@@ -71,16 +71,16 @@ export function AIOrb({ size = "md", state = "idle", className }: AIOrbProps) {
         />
       )}
 
-      {/* slow rotating dashed ring */}
+      {/* rotating dashed ring — speeds up per state */}
       <motion.span
         aria-hidden
         className="absolute inset-0 rounded-full border border-dashed border-white/25"
-        animate={reduceMotion ? undefined : { rotate: 360 }}
-        transition={reduceMotion ? undefined : { duration: 12, repeat: Infinity, ease: "linear" }}
+        variants={aiOrbRing}
+        animate={reduceMotion ? undefined : state}
       />
 
       <motion.div
-        animate={reduceMotion ? undefined : { rotate: [0, 8, -4, 0] }}
+        animate={reduceMotion ? undefined : { rotate: scaleDrift([0, 8, -4, 0], animationIntensity) }}
         transition={reduceMotion ? undefined : { duration: 5, repeat: Infinity, ease: "easeInOut" }}
         whileHover={reduceMotion ? undefined : { scale: 1.06 }}
         className="relative flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 shadow-glow-accent"

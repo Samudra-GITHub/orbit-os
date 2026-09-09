@@ -12,10 +12,13 @@ import {
   Briefcase,
   CloudSun,
   Settings,
+  Timer,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OrbitLogo } from "@/components/branding/OrbitLogo";
+import { SUBSCRIPTIONS } from "@/lib/constants/finance";
+import { daysUntil } from "@/lib/finance/computeStats";
 
 interface SidebarItem {
   href: string;
@@ -26,6 +29,7 @@ interface SidebarItem {
 const NAV_ITEMS: SidebarItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/ai", label: "Assistant", icon: Sparkles },
+  { href: "/focus", label: "Focus", icon: Timer },
   { href: "/finance", label: "Finance", icon: Wallet },
   { href: "/health", label: "Health", icon: HeartPulse },
   { href: "/weather", label: "Weather", icon: CloudSun },
@@ -33,15 +37,28 @@ const NAV_ITEMS: SidebarItem[] = [
   { href: "/workspace", label: "Workspace", icon: Briefcase },
 ];
 
+// A subscription renewing within 5 days lights up a quiet badge dot on
+// the Finance nav icon — the same "something needs your attention"
+// pattern the notification bell uses, just scoped to one module. Uses the
+// same fixed reference date as the rest of Finance OS (TRANSACTIONS/
+// SUBSCRIPTIONS are seeded around Sep 9, 2026, not the real clock).
+const FINANCE_NOW = new Date("2026-09-09T12:00:00");
+const HAS_UPCOMING_RENEWAL = SUBSCRIPTIONS.some((s) => {
+  const days = daysUntil(s.renewsOn, FINANCE_NOW);
+  return s.status === "active" && days >= 0 && days <= 5;
+});
+
 interface SidebarProps {
   items?: SidebarItem[];
 }
 
 function NavIcon({ item, isActive, layoutId }: { item: SidebarItem; isActive: boolean; layoutId: string }) {
+  const showBadge = item.href === "/finance" && HAS_UPCOMING_RENEWAL;
+
   return (
     <Link
       href={item.href}
-      aria-label={item.label}
+      aria-label={showBadge ? `${item.label} — subscription renewing soon` : item.label}
       aria-current={isActive ? "page" : undefined}
       className="group relative flex h-11 w-11 items-center justify-center rounded-xl transition-colors hover:bg-white/5"
     >
@@ -61,8 +78,12 @@ function NavIcon({ item, isActive, layoutId }: { item: SidebarItem; isActive: bo
           strokeWidth={1.75}
         />
       </motion.span>
+      {showBadge && (
+        <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-amber-400 shadow-glow-accent ring-2 ring-ink-900" />
+      )}
       <span className="pointer-events-none absolute left-full ml-3 hidden translate-x-[-4px] whitespace-nowrap rounded-lg bg-ink-800 px-2.5 py-1.5 text-xs text-white opacity-0 shadow-glass ring-1 ring-white/10 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 md:block">
         {item.label}
+        {showBadge && " · renews soon"}
       </span>
     </Link>
   );
@@ -110,7 +131,11 @@ export function Sidebar({ items = NAV_ITEMS }: SidebarProps) {
         <Link
           href="/settings"
           aria-label="Settings"
-          className="flex h-11 w-11 items-center justify-center rounded-xl text-mist-500 transition-colors hover:bg-white/5 hover:text-mist-300"
+          aria-current={pathname?.startsWith("/settings") ? "page" : undefined}
+          className={cn(
+            "flex h-11 w-11 items-center justify-center rounded-xl transition-colors hover:bg-white/5",
+            pathname?.startsWith("/settings") ? "text-white" : "text-mist-500 hover:text-mist-300"
+          )}
         >
           <Settings className="h-[19px] w-[19px]" strokeWidth={1.75} />
         </Link>
@@ -136,11 +161,12 @@ export function Sidebar({ items = NAV_ITEMS }: SidebarProps) {
       >
         {items.map((item) => {
           const isActive = pathname?.startsWith(item.href) ?? false;
+          const showBadge = item.href === "/finance" && HAS_UPCOMING_RENEWAL;
           return (
             <Link
               key={item.href}
               href={item.href}
-              aria-label={item.label}
+              aria-label={showBadge ? `${item.label} — subscription renewing soon` : item.label}
               aria-current={isActive ? "page" : undefined}
               className="relative flex h-11 w-11 items-center justify-center rounded-xl"
             >
@@ -155,6 +181,9 @@ export function Sidebar({ items = NAV_ITEMS }: SidebarProps) {
                 className={cn("relative h-[18px] w-[18px]", isActive ? "text-white" : "text-mist-500")}
                 strokeWidth={1.75}
               />
+              {showBadge && (
+                <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-amber-400 ring-2 ring-ink-900" />
+              )}
             </Link>
           );
         })}

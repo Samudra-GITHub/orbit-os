@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { motion, useAnimationControls, useReducedMotion } from "framer-motion";
+import { springs } from "@/lib/motion/springs";
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -25,6 +26,9 @@ interface PageTransitionProps {
  * handling) completely untouched. Trade-off: no exit animation for the
  * outgoing page (that requires keeping its old DOM around, which is the
  * same remount-adjacent territory that caused the bug) — enter only.
+ *
+ * `SharedMorph` in this same folder carries the fuller version of this
+ * warning for `layoutId`-based transitions specifically.
  */
 export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
@@ -42,7 +46,7 @@ export function PageTransition({ children }: PageTransitionProps) {
       opacity: 1,
       y: 0,
       filter: "blur(0px)",
-      transition: { type: "spring", stiffness: 260, damping: 26, mass: 0.9 },
+      transition: springs.default,
     });
   }, [sectionKey, controls, reduceMotion]);
 

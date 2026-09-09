@@ -47,8 +47,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
-        <CosmicBackground />
-        <SystemProvider>{children}</SystemProvider>
+        <SystemProvider>
+          <CosmicBackground />
+          {children}
+        </SystemProvider>
       </body>
     </html>
   );

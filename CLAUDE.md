@@ -25,7 +25,8 @@ You are building **ORBIT OS**. Follow this Design Bible at all times.
 
 - Spring-based interactions (`type: "spring"`, no linear/ease-only transitions for interactive elements).
 - No abrupt transitions — always animate in/out, never snap.
-- Cards float subtly on load (`fadeFloatIn` variant in `components/motion/variants.ts`).
+- Cards float subtly on load (`fadeFloatIn` variant in `lib/motion/variants.ts`).
+- All motion tokens (springs, durations, easings, variants) live in `lib/motion/`; reusable interaction effects (magnetic hover, cursor spotlight, glass ripple, page/shared-element transitions) live in `components/effects/` — compose those instead of redefining animation inline.
 - Buttons have magnetic hover (`components/ui/MagneticButton.tsx`).
 - Glass surfaces morph smoothly (backdrop-blur transitions, no instant blur toggles).
 
