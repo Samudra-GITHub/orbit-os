@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { springs } from "@/lib/motion/springs";
 import { Check } from "lucide-react";
 import type { AccentPreset } from "@/lib/theme";
 
@@ -40,7 +41,7 @@ export function AccentPicker({ accents, selected, onSelect }: AccentPickerProps)
                 <motion.span
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 420, damping: 24 }}
+                  transition={springs.picker}
                   className="flex h-5 w-5 items-center justify-center rounded-full bg-white/90"
                 >
                   <Check className="h-3 w-3 text-ink-900" strokeWidth={3} />

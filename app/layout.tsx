@@ -16,7 +16,15 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+// No production domain is configured yet — `NEXT_PUBLIC_SITE_URL` lets a
+// real deploy override this without another code change; until then this
+// resolves OpenGraph/Twitter image URLs against localhost instead of
+// leaving `metadataBase` unset (which Next.js otherwise warns about on
+// every build).
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Orbit OS",
   description: "Your day, orchestrated.",
   manifest: "/manifest.webmanifest",

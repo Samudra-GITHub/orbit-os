@@ -45,38 +45,40 @@ export function SubscriptionCard({ subscription, index = 0 }: SubscriptionCardPr
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
-      <GlassSurface intensity="subtle" className={cn("flex h-full flex-col gap-4 rounded-3xl p-5", isExpired && "opacity-60")}>
-        <div className="flex items-center justify-between">
-          <div
-            className={cn(
-              "flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br",
-              categoryGradient[subscription.category]
-            )}
-          >
-            <Icon className="h-5 w-5 text-white" strokeWidth={1.75} />
+      <GlassSurface intensity="subtle" className={cn("h-full rounded-3xl p-5", isExpired && "opacity-60")}>
+        <div className="flex h-full flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div
+              className={cn(
+                "flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br",
+                categoryGradient[subscription.category]
+              )}
+            >
+              <Icon className="h-5 w-5 text-white" strokeWidth={1.75} />
+            </div>
+            <Badge variant={isExpired ? "neutral" : "positive"} className="text-[10px]">
+              {isExpired ? "Expired" : "Active"}
+            </Badge>
           </div>
-          <Badge variant={isExpired ? "neutral" : "positive"} className="text-[10px]">
-            {isExpired ? "Expired" : "Active"}
-          </Badge>
-        </div>
 
-        <div>
-          <p className="font-medium text-white">{subscription.name}</p>
-          <p className="mt-0.5 text-xs capitalize text-mist-400">{subscription.category}</p>
-        </div>
-
-        <div className="mt-auto flex items-end justify-between border-t border-white/[0.08] pt-3.5">
           <div>
-            <p className="font-mono text-lg font-semibold text-white">
-              {subscription.monthlyCost > 0 ? formatINR(subscription.monthlyCost) : formatINR(subscription.yearlyCost)}
-            </p>
-            <p className="text-[11px] text-mist-500">
-              per {subscription.monthlyCost > 0 ? "month" : "year"} · {formatINR(subscription.yearlyCost)}/yr
+            <p className="font-medium text-white">{subscription.name}</p>
+            <p className="mt-0.5 text-xs capitalize text-mist-400">{subscription.category}</p>
+          </div>
+
+          <div className="mt-auto flex items-end justify-between border-t border-white/[0.08] pt-3.5">
+            <div>
+              <p className="font-mono text-lg font-semibold text-white">
+                {subscription.monthlyCost > 0 ? formatINR(subscription.monthlyCost) : formatINR(subscription.yearlyCost)}
+              </p>
+              <p className="text-[11px] text-mist-500">
+                per {subscription.monthlyCost > 0 ? "month" : "year"} · {formatINR(subscription.yearlyCost)}/yr
+              </p>
+            </div>
+            <p className={cn("text-[11px]", isExpired ? "text-mist-500" : days <= 5 ? "text-amber-300" : "text-mist-400")}>
+              {isExpired ? `Expired ${Math.abs(days)}d ago` : `Renews in ${days}d`}
             </p>
           </div>
-          <p className={cn("text-[11px]", isExpired ? "text-mist-500" : days <= 5 ? "text-amber-300" : "text-mist-400")}>
-            {isExpired ? `Expired ${Math.abs(days)}d ago` : `Renews in ${days}d`}
-          </p>
         </div>
       </GlassSurface>
     </motion.div>

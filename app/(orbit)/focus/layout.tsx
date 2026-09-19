@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { pageFade } from "@/lib/motion/variants";
 import { LayoutGrid, History, BarChart3, Settings as SettingsIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -45,9 +46,7 @@ export default function FocusLayout({ children }: { children: ReactNode }) {
 
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        {...pageFade}
       >
         {children}
       </motion.div>

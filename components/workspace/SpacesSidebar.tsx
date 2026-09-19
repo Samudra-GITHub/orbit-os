@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { FileText, KanbanSquare, FolderOpen, Home, ChevronRight, Plus } from "lucide-react";
 import { GlassSurface } from "@/components/ui/GlassSurface";
+import { springs } from "@/lib/motion/springs";
 import { SPACES } from "@/lib/constants/workspace";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +46,7 @@ export function SpacesSidebar() {
               {isActive && (
                 <motion.span
                   layoutId="workspace-nav-active"
-                  transition={{ type: "spring", stiffness: 340, damping: 28 }}
+                  transition={springs.navActive}
                   className="absolute inset-0 rounded-xl bg-white/10 ring-1 ring-white/10"
                 />
               )}

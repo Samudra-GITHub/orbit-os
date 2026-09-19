@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { Card } from "@/components/ui/Card";
 import { MONTHLY_COMPARISON } from "@/lib/constants/finance";
@@ -27,7 +28,7 @@ function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: 
 
 /** Income vs. expenses, grouped bars, last 6 months — animates in on
  *  first scroll into view (Recharts bars animate on mount by default). */
-export function MonthlyComparisonChart() {
+function MonthlyComparisonChartImpl() {
   return (
     <Card index={0} variant="widget" className="flex flex-col gap-4 rounded-4xl">
       <div className="flex items-center justify-between">
@@ -42,7 +43,7 @@ export function MonthlyComparisonChart() {
         </div>
       </div>
 
-      <div style={{ height: 260 }}>
+      <div style={{ height: 260 }} role="img" aria-label="Income versus expenses for the last 6 months, shown as grouped bars">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={MONTHLY_COMPARISON} margin={{ top: 4, right: 4, left: 4, bottom: 0 }} barGap={6}>
             <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />
@@ -56,3 +57,5 @@ export function MonthlyComparisonChart() {
     </Card>
   );
 }
+
+export const MonthlyComparisonChart = memo(MonthlyComparisonChartImpl);

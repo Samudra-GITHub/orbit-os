@@ -84,8 +84,8 @@ export const GlassSurface = forwardRef<HTMLDivElement, GlassSurfaceProps>(functi
   return (
     <motion.div
       ref={setRefs}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
+      onPointerMove={interactive ? handlePointerMove : onPointerMove}
+      onPointerLeave={interactive ? handlePointerLeave : onPointerLeave}
       custom={custom ?? index}
       variants={animateEntrance ? (variants ?? fadeFloatIn) : variants}
       initial={initial ?? (animateEntrance && !reduceMotion ? "hidden" : false)}
@@ -120,17 +120,21 @@ export const GlassSurface = forwardRef<HTMLDivElement, GlassSurfaceProps>(functi
         className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.05] via-transparent to-black/10"
       />
 
-      {/* subtle diagonal refraction sheen */}
-      <span
-        aria-hidden
-        className="glass-refraction pointer-events-none absolute -inset-x-6 -top-8 h-20 rotate-[6deg] opacity-60 blur-xl"
-      />
+      {/* subtle diagonal refraction sheen + cursor spotlight — both are
+          hover/interaction affordances, so non-interactive surfaces (nested
+          preview widgets, sidebar rails with interactive={false}) skip the
+          extra blur layer and pointer-tracking entirely. */}
+      {interactive && (
+        <span
+          aria-hidden
+          className="glass-refraction pointer-events-none absolute -inset-x-6 -top-8 h-20 rotate-[6deg] opacity-60 blur-xl"
+        />
+      )}
 
       {/* 2% noise overlay */}
       <span aria-hidden className="bg-cosmic-noise pointer-events-none absolute inset-0 opacity-[0.02] mix-blend-overlay" />
 
-      {/* cursor spotlight — follows the pointer locally on this surface */}
-      <CursorSpotlight />
+      {interactive && <CursorSpotlight />}
 
       {/* animated ambient glow on hover */}
       {interactive && (

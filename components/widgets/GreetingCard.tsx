@@ -112,7 +112,7 @@ export function GreetingCard() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -bottom-24 -right-10 h-64 w-64 rounded-full bg-cyan-400/15 blur-[100px]"
+          className="pointer-events-none absolute -bottom-24 -right-10 h-64 w-64 rounded-full bg-amber-400/15 blur-[100px]"
         />
 
         <div className="relative flex h-full flex-col justify-between gap-5">

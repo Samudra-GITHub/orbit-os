@@ -16,6 +16,16 @@ export const springs = {
   overlay: { type: "spring", stiffness: 300, damping: 28, mass: 0.8 } as const,
   /** Magnetic button follow — needs to feel light and immediate. */
   magnetic: { stiffness: 300, damping: 20, mass: 0.5 } as const,
+  /** The active-item highlight `layoutId` pill every sidebar/tab rail
+   *  shares (desktop rail, mobile dock, Finance/Travel/Health/Settings/
+   *  Workspace/AI sub-nav). Previously hand-rolled per file as
+   *  `{ type: "spring", stiffness: 340, damping: 28 }` — import this
+   *  instead so the seven copies stay in sync. */
+  navActive: { type: "spring", stiffness: 340, damping: 28 } as const,
+  /** Picker swatch selection (theme/accent/wallpaper/ambient-scene cards)
+   *  — was hand-rolled as `{ stiffness: 420, damping: 24 }` in three
+   *  separate Settings/Focus components. */
+  picker: { type: "spring", stiffness: 420, damping: 24 } as const,
 } as const;
 
 /** Magnetic-hover pull strength (fraction of cursor offset the element

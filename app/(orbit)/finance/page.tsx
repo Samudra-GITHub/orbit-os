@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { CalendarClock, CalendarRange, PiggyBank, Repeat } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { FinanceHero } from "@/components/finance/FinanceHero";
 import { WalletCard } from "@/components/finance/WalletCard";
-import { SpendingChart } from "@/components/finance/SpendingChart";
-import { CategoryBreakdown } from "@/components/finance/CategoryBreakdown";
 import { AIInsightCard } from "@/components/finance/AIInsightCard";
 import { TransactionList } from "@/components/finance/TransactionList";
 import { TRANSACTIONS, SUBSCRIPTIONS, WALLET, type CategoryId } from "@/lib/constants/finance";
@@ -14,6 +13,15 @@ import { computeQuickStats, daysUntil } from "@/lib/finance/computeStats";
 import { formatINR } from "@/lib/finance/format";
 
 const NOW = new Date("2026-09-09T12:00:00");
+
+// Both pull in recharts — deferred so the initial Finance chunk doesn't pay
+// for it until these scroll into view.
+const SpendingChart = dynamic(() => import("@/components/finance/SpendingChart").then((m) => m.SpendingChart), {
+  loading: () => <div className="h-[240px] animate-pulse rounded-4xl bg-white/[0.03] lg:col-span-2" />,
+});
+const CategoryBreakdown = dynamic(() => import("@/components/finance/CategoryBreakdown").then((m) => m.CategoryBreakdown), {
+  loading: () => <div className="h-[240px] animate-pulse rounded-4xl bg-white/[0.03]" />,
+});
 
 export default function FinancePage() {
   const [categoryFilter, setCategoryFilter] = useState<CategoryId | null>(null);

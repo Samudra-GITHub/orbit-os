@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
+import { pageFade } from "@/lib/motion/variants";
 import { usePathname } from "next/navigation";
 import { SpacesSidebar } from "@/components/workspace/SpacesSidebar";
 import { AIContextPanel } from "@/components/workspace/AIContextPanel";
@@ -26,9 +27,7 @@ export function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
 
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        {...pageFade}
         className="min-w-0 flex-1 overflow-hidden"
       >
         {children}

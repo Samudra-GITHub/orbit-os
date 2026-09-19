@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { Card } from "@/components/ui/Card";
 import { TRANSACTIONS } from "@/lib/constants/finance";
@@ -29,7 +29,7 @@ interface SpendingChartProps {
 /** Daily spending for the current month, rendered as a gradient area
  *  chart — derived from `TRANSACTIONS` (via `computeDailySpending`) so it
  *  can never disagree with the transaction list below it. */
-export function SpendingChart({ className }: SpendingChartProps) {
+function SpendingChartImpl({ className }: SpendingChartProps) {
   // Fixed "today" (2026-09-09) rather than `new Date()` — TRANSACTIONS is
   // seeded through Sep 9, 2026, and the real current date would otherwise
   // show an empty chart once that date passes.
@@ -39,7 +39,7 @@ export function SpendingChart({ className }: SpendingChartProps) {
     <Card index={1} variant="widget" className={cn("flex flex-col gap-4 rounded-4xl", className)}>
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-mist-400">Spending overview — September</p>
 
-      <div style={{ height: 240 }}>
+      <div style={{ height: 240 }} role="img" aria-label="Daily spending for September, shown as an area chart">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
             <defs>
@@ -75,3 +75,5 @@ export function SpendingChart({ className }: SpendingChartProps) {
     </Card>
   );
 }
+
+export const SpendingChart = memo(SpendingChartImpl);

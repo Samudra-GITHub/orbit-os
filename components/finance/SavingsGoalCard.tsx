@@ -36,7 +36,8 @@ export function SavingsGoalCard({ goal, index = 0 }: SavingsGoalCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
-      <GlassSurface intensity="subtle" className="flex h-full flex-col gap-4 rounded-3xl p-5">
+      <GlassSurface intensity="subtle" className="h-full rounded-3xl p-5">
+        <div className="flex h-full flex-col gap-4">
         <div className="flex items-center gap-4">
           <div className="relative flex h-[76px] w-[76px] shrink-0 items-center justify-center">
             <svg viewBox="0 0 72 72" className="h-full w-full -rotate-90">
@@ -102,6 +103,7 @@ export function SavingsGoalCard({ goal, index = 0 }: SavingsGoalCardProps) {
           <span className="text-mist-500">
             {isComplete ? "Target met" : `${formatINR(goal.target - goal.saved)} to go`}
           </span>
+        </div>
         </div>
       </GlassSurface>
     </motion.div>

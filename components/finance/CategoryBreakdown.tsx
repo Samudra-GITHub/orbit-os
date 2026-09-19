@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { Card } from "@/components/ui/Card";
 import { CATEGORY_BUDGETS, type CategoryId } from "@/lib/constants/finance";
@@ -38,7 +39,7 @@ interface CategoryBreakdownProps {
  *  (Analytics/Budget) shows every category. Clicking a slice or legend
  *  row calls `onSelect`, which the Overview page uses to filter the
  *  transaction list below it. */
-export function CategoryBreakdown({ compact = false, className, selected, onSelect }: CategoryBreakdownProps) {
+function CategoryBreakdownImpl({ compact = false, className, selected, onSelect }: CategoryBreakdownProps) {
   const totalSpent = CATEGORY_BUDGETS.reduce((sum, c) => sum + c.spent, 0);
   const categories = compact
     ? [...CATEGORY_BUDGETS].sort((a, b) => b.spent - a.spent).slice(0, 4)
@@ -49,7 +50,7 @@ export function CategoryBreakdown({ compact = false, className, selected, onSele
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-mist-400">Spending by category</p>
 
       <div className="flex flex-col items-center gap-5 sm:flex-row">
-        <div className="relative h-32 w-32 shrink-0">
+        <div className="relative h-32 w-32 shrink-0" role="img" aria-label={`Spending by category, total ${formatCompactINR(totalSpent)}`}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -106,3 +107,5 @@ export function CategoryBreakdown({ compact = false, className, selected, onSele
     </Card>
   );
 }
+
+export const CategoryBreakdown = memo(CategoryBreakdownImpl);

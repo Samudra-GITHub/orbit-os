@@ -16,9 +16,13 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { springs } from "@/lib/motion/springs";
 import { OrbitLogo } from "@/components/branding/OrbitLogo";
 import { SUBSCRIPTIONS } from "@/lib/constants/finance";
 import { daysUntil } from "@/lib/finance/computeStats";
+import { TRIPS } from "@/lib/constants/travel";
+import { daysUntilTrip } from "@/lib/travel/computeStats";
+import { DAILY_SUMMARY, HYDRATION_GOAL_L } from "@/lib/constants/health";
 
 interface SidebarItem {
   href: string;
@@ -37,35 +41,53 @@ const NAV_ITEMS: SidebarItem[] = [
   { href: "/workspace", label: "Workspace", icon: Briefcase },
 ];
 
-// A subscription renewing within 5 days lights up a quiet badge dot on
-// the Finance nav icon — the same "something needs your attention"
-// pattern the notification bell uses, just scoped to one module. Uses the
-// same fixed reference date as the rest of Finance OS (TRANSACTIONS/
-// SUBSCRIPTIONS are seeded around Sep 9, 2026, not the real clock).
+// A subscription renewing soon, or a trip departing soon, lights up a
+// quiet badge dot on that module's nav icon — the same "something needs
+// your attention" pattern the notification bell uses, just scoped per
+// module. Each uses its own fixed reference date matching that module's
+// seeded mock data (not the real clock).
 const FINANCE_NOW = new Date("2026-09-09T12:00:00");
 const HAS_UPCOMING_RENEWAL = SUBSCRIPTIONS.some((s) => {
   const days = daysUntil(s.renewsOn, FINANCE_NOW);
   return s.status === "active" && days >= 0 && days <= 5;
 });
 
+const TRAVEL_NOW = new Date("2026-09-09T12:00:00");
+const HAS_UPCOMING_DEPARTURE = TRIPS.some((t) => {
+  const days = daysUntilTrip(t, TRAVEL_NOW);
+  return days >= 0 && days <= 14;
+});
+
+// The seeded "today" hasn't hit its hydration goal yet — same still-mock-data
+// badge pattern as Finance/Travel, just sourced from `DAILY_SUMMARY` instead
+// of a days-until calculation.
+const HAS_INCOMPLETE_HYDRATION = DAILY_SUMMARY.waterIntakeL < HYDRATION_GOAL_L;
+
+const NAV_BADGES: Record<string, { active: boolean; suffix: string }> = {
+  "/finance": { active: HAS_UPCOMING_RENEWAL, suffix: " · renews soon" },
+  "/travel": { active: HAS_UPCOMING_DEPARTURE, suffix: " · trip soon" },
+  "/health": { active: HAS_INCOMPLETE_HYDRATION, suffix: " · hydration goal pending" },
+};
+
 interface SidebarProps {
   items?: SidebarItem[];
 }
 
 function NavIcon({ item, isActive, layoutId }: { item: SidebarItem; isActive: boolean; layoutId: string }) {
-  const showBadge = item.href === "/finance" && HAS_UPCOMING_RENEWAL;
+  const badge = NAV_BADGES[item.href];
+  const showBadge = badge?.active ?? false;
 
   return (
     <Link
       href={item.href}
-      aria-label={showBadge ? `${item.label} — subscription renewing soon` : item.label}
+      aria-label={showBadge ? `${item.label}${badge!.suffix}` : item.label}
       aria-current={isActive ? "page" : undefined}
       className="group relative flex h-11 w-11 items-center justify-center rounded-xl transition-colors hover:bg-white/5"
     >
       {isActive && (
         <motion.span
           layoutId={layoutId}
-          transition={{ type: "spring", stiffness: 340, damping: 28 }}
+          transition={springs.navActive}
           className="absolute inset-0 rounded-xl bg-white/10 shadow-glow-accent ring-1 ring-white/10"
         />
       )}
@@ -83,7 +105,7 @@ function NavIcon({ item, isActive, layoutId }: { item: SidebarItem; isActive: bo
       )}
       <span className="pointer-events-none absolute left-full ml-3 hidden translate-x-[-4px] whitespace-nowrap rounded-lg bg-ink-800 px-2.5 py-1.5 text-xs text-white opacity-0 shadow-glass ring-1 ring-white/10 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 md:block">
         {item.label}
-        {showBadge && " · renews soon"}
+        {showBadge && badge!.suffix}
       </span>
     </Link>
   );
@@ -161,19 +183,20 @@ export function Sidebar({ items = NAV_ITEMS }: SidebarProps) {
       >
         {items.map((item) => {
           const isActive = pathname?.startsWith(item.href) ?? false;
-          const showBadge = item.href === "/finance" && HAS_UPCOMING_RENEWAL;
+          const badge = NAV_BADGES[item.href];
+          const showBadge = badge?.active ?? false;
           return (
             <Link
               key={item.href}
               href={item.href}
-              aria-label={showBadge ? `${item.label} — subscription renewing soon` : item.label}
+              aria-label={showBadge ? `${item.label}${badge!.suffix}` : item.label}
               aria-current={isActive ? "page" : undefined}
               className="relative flex h-11 w-11 items-center justify-center rounded-xl"
             >
               {isActive && (
                 <motion.span
                   layoutId="sidebar-active-mobile"
-                  transition={{ type: "spring", stiffness: 340, damping: 28 }}
+                  transition={springs.navActive}
                   className="absolute inset-0 rounded-xl bg-white/10 ring-1 ring-white/10"
                 />
               )}

@@ -20,6 +20,16 @@ export const fadeFloatIn: Variants = {
   }),
 };
 
+/** The routed-content cross-fade every module layout uses on path change
+ *  (Finance/Travel/Health/Focus sub-nav, Settings, Workspace, AI) — pass as
+ *  `initial`/`animate` on a `motion.div` keyed by `pathname`. Previously
+ *  hand-rolled identically in 7 separate `layout.tsx`/`*Layout.tsx` files. */
+export const pageFade = {
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const },
+};
+
 /** A lighter entrance for smaller elements (chips, list rows) — no scale,
  *  just a fade + short rise. */
 export const fadeUp: Variants = {

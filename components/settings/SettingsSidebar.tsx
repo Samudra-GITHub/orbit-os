@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { LayoutGrid, Palette, Bell, Accessibility, User, Shield } from "lucide-react";
 import { GlassSurface } from "@/components/ui/GlassSurface";
+import { springs } from "@/lib/motion/springs";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -42,7 +43,7 @@ export function SettingsSidebar() {
               {isActive && (
                 <motion.span
                   layoutId="settings-nav-active"
-                  transition={{ type: "spring", stiffness: 340, damping: 28 }}
+                  transition={springs.navActive}
                   className="absolute inset-0 rounded-xl bg-white/10 ring-1 ring-white/10"
                 />
               )}

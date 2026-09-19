@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { GlassSurface } from "@/components/ui/GlassSurface";
 
@@ -13,6 +13,8 @@ import { GlassSurface } from "@/components/ui/GlassSurface";
  * update the real app with — nothing here is simulated separately.
  */
 export function PreviewDevice() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <div className="relative w-full max-w-[280px] shrink-0 overflow-hidden rounded-[22px] border border-white/10 shadow-glass-lg">
       {/* mini wallpaper mesh — same recipe as CosmicBackground, scaled down */}
@@ -43,7 +45,7 @@ export function PreviewDevice() {
         <GlassSurface intensity="default" interactive={false} className="rounded-xl p-2.5">
           <div className="flex items-center gap-2">
             <motion.div
-              animate={{ scale: [1, 1.08, 1] }}
+              animate={reduceMotion ? undefined : { scale: [1, 1.08, 1] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-cyan-400"
             >
@@ -59,16 +61,20 @@ export function PreviewDevice() {
 
         {/* two mini widgets */}
         <div className="grid grid-cols-2 gap-2">
-          <GlassSurface intensity="subtle" interactive={false} className="flex flex-col gap-1.5 rounded-xl p-2.5">
-            <span className="h-1.5 w-8 rounded-full bg-white/20" />
-            <span className="h-3 w-12 rounded-full bg-white/30" />
-            <span className="h-1 w-full rounded-full bg-white/10" />
+          <GlassSurface intensity="subtle" interactive={false} className="rounded-xl p-2.5">
+            <div className="flex flex-col gap-1.5">
+              <span className="h-1.5 w-8 rounded-full bg-white/20" />
+              <span className="h-3 w-12 rounded-full bg-white/30" />
+              <span className="h-1 w-full rounded-full bg-white/10" />
+            </div>
           </GlassSurface>
-          <GlassSurface intensity="subtle" interactive={false} className="flex flex-col gap-1.5 rounded-xl p-2.5">
-            <span className="h-1.5 w-8 rounded-full bg-white/20" />
-            <div className="flex items-center gap-1">
-              <span className="h-4 w-4 rounded-full border-2 border-cyan-300/70" />
-              <span className="h-1.5 w-8 rounded-full bg-white/15" />
+          <GlassSurface intensity="subtle" interactive={false} className="rounded-xl p-2.5">
+            <div className="flex flex-col gap-1.5">
+              <span className="h-1.5 w-8 rounded-full bg-white/20" />
+              <div className="flex items-center gap-1">
+                <span className="h-4 w-4 rounded-full border-2 border-cyan-300/70" />
+                <span className="h-1.5 w-8 rounded-full bg-white/15" />
+              </div>
             </div>
           </GlassSurface>
         </div>

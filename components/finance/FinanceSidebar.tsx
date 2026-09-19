@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { LayoutGrid, LineChart, Repeat, PiggyBank, Target } from "lucide-react";
 import { GlassSurface } from "@/components/ui/GlassSurface";
+import { springs } from "@/lib/motion/springs";
 import { WALLET } from "@/lib/constants/finance";
 import { formatINR } from "@/lib/finance/format";
 import { cn } from "@/lib/utils";
@@ -46,7 +47,7 @@ export function FinanceSidebar() {
                 {isActive && (
                   <motion.span
                     layoutId="finance-nav-active"
-                    transition={{ type: "spring", stiffness: 340, damping: 28 }}
+                    transition={springs.navActive}
                     className="absolute inset-0 rounded-xl bg-white/10 ring-1 ring-white/10"
                   />
                 )}

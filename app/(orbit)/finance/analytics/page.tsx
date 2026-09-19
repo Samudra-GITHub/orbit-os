@@ -1,14 +1,21 @@
 "use client";
 
 import { useMemo } from "react";
+import dynamic from "next/dynamic";
 import { Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, Legend } from "recharts";
 import { Card } from "@/components/ui/Card";
-import { MonthlyComparisonChart } from "@/components/finance/MonthlyComparisonChart";
-import { SpendingHeatmap } from "@/components/finance/SpendingHeatmap";
 import { TRANSACTIONS, CATEGORY_TREND } from "@/lib/constants/finance";
 import { computeDailySpending } from "@/lib/finance/computeStats";
 import { formatINR } from "@/lib/finance/format";
 import { cn } from "@/lib/utils";
+
+const MonthlyComparisonChart = dynamic(
+  () => import("@/components/finance/MonthlyComparisonChart").then((m) => m.MonthlyComparisonChart),
+  { loading: () => <div className="h-[260px] animate-pulse rounded-4xl bg-white/[0.03]" /> }
+);
+const SpendingHeatmap = dynamic(() => import("@/components/finance/SpendingHeatmap").then((m) => m.SpendingHeatmap), {
+  loading: () => <div className="h-40 animate-pulse rounded-4xl bg-white/[0.03]" />,
+});
 
 interface TooltipPayloadItem {
   dataKey: string;
@@ -57,7 +64,7 @@ export default function FinanceAnalyticsPage() {
 
       <Card index={2} variant="widget" className="flex flex-col gap-4 rounded-4xl">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-mist-400">Category trend — Food, Transport, Shopping</p>
-        <div style={{ height: 260 }}>
+        <div style={{ height: 260 }} role="img" aria-label="Spending trend for Food, Transport, and Shopping, shown as a line chart">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={CATEGORY_TREND} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
               <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />

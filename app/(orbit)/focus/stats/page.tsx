@@ -45,7 +45,7 @@ export default function FocusStatsPage() {
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
           <ProductivityRing minutes={stats.todayMinutes} goalMinutes={DAILY_FOCUS_GOAL_MINUTES} size="lg" />
           <div className="text-center sm:text-left">
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-mist-400">Today's goal</p>
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-mist-400">Today&apos;s goal</p>
             <p className="mt-1 text-sm text-mist-300">
               {stats.todayMinutes} of {DAILY_FOCUS_GOAL_MINUTES} minutes focused today.
             </p>

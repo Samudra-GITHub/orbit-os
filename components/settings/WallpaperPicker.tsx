@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { springs } from "@/lib/motion/springs";
 import { Check } from "lucide-react";
 import type { WallpaperPreset } from "@/lib/theme";
 import { cn } from "@/lib/utils";
@@ -46,7 +47,7 @@ export function WallpaperPicker({ wallpapers, selected, onSelect }: WallpaperPic
                 <motion.span
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 420, damping: 24 }}
+                  transition={springs.picker}
                   className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-violet-500"
                 >
                   <Check className="h-3 w-3 text-white" strokeWidth={3} />
