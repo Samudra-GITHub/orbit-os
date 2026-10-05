@@ -23,3 +23,14 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Added by repository cleanup
+.claude/
+.claude-flow/
+CLAUDE.md
+AGENTS.md
+
+# Added by repository cleanup
+.vscode/
+.idea/
+*.log
