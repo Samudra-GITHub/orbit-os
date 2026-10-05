@@ -1,6 +1,24 @@
+<div align="center">
+
+<img src="public/branding/logo-mark.svg" width="96" alt="Orbit OS logo" />
+
 # Orbit OS
 
-> An experimental, glass-surfaced "operating system" interface for a personal dashboard, built with Next.js.
+**An experimental operating-system interface for a personal dashboard, built from glass panels and spring motion.**
+
+Widgets · AI workspace · notes, files and projects · command palette · notification center
+
+<br />
+
+**[Overview](#overview)** &nbsp;·&nbsp; **[Features](#features)** &nbsp;·&nbsp; **[Getting started](#getting-started)** &nbsp;·&nbsp; **[Architecture](#architecture)** &nbsp;·&nbsp; **[Structure](#project-structure)**
+
+<br />
+
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white) ![React](https://img.shields.io/badge/React-19-20232a?style=flat-square&logo=react&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript&logoColor=white) ![Tailwind](https://img.shields.io/badge/Tailwind-4-06b6d4?style=flat-square&logo=tailwindcss&logoColor=white) ![Framer_Motion](https://img.shields.io/badge/Framer_Motion-animation-0055ff?style=flat-square&logo=framer&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+
+</div>
+
+---
 
 ## Overview
 
@@ -87,15 +105,11 @@ The design and engineering rules are written down in [docs/design-bible.md](docs
 
 No deployment configuration is included. It is a standard Next.js app, so `npm run build` followed by `npm run start` serves it.
 
-## Screenshots
-
-`assets/` contains only placeholder graphics, so no screenshots are shown.
-
 ## Future Improvements
 
 - Persistent workspace layouts
 - Real data connections for the finance and health widgets
-- Replace placeholder screenshots with real captures
+- Add real screenshots to this README
 
 ## License
 
