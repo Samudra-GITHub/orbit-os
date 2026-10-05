@@ -1,113 +1,102 @@
 # Orbit OS
 
-**Experimental futuristic operating system interface.**
+> An experimental, glass-surfaced "operating system" interface for a personal dashboard, built with Next.js.
 
-A glass-surfaced, widget-driven desktop concept — not a real OS, but an interface exploration of what a personal dashboard could feel like if it borrowed from operating-system design instead of dashboard templates.
+## Overview
 
-<br/>
+Orbit OS is an interface exploration, not a real OS. It asks what a personal dashboard would feel like if it borrowed from operating-system design (a persistent shell, a command palette, a notification center, a workspace of notes, files and projects, an AI surface) instead of dashboard templates. The visual language is a dark "Liquid Spatial UI" with translucent glass panels and a purple/cyan identity.
 
-<img src="./assets/hero-placeholder.svg" width="100%" alt="Orbit OS hero" />
+Most data is mocked. Only the weather views can call a live API.
 
-<br/>
+## Features
 
-## Floating Desktop
+- **Dashboard** of independent glass widgets: greeting, weather, finance, health, focus timer, music player, calendar timeline and an AI insight card
+- **AI workspace** with a chat canvas, conversation sidebar, context panel and a voice orb (`/ai`, `/ai/chat`, `/ai/voice`)
+- **Workspace** with a notes editor, file explorer and preview, and a Kanban project board
+- **Command center**: a command palette overlay with fuzzy search, suggestions and recent commands
+- **System layer**: notification center, toasts, and theme and system providers
+- **Onboarding flow** with a branded logo set and favicons (see [docs/branding.md](docs/branding.md))
+- **Weather** from OpenWeatherMap, falling back to mock data if the key is missing or the request fails
+- Spring-based motion, with `prefers-reduced-motion` handled globally
 
-The workspace is a canvas of floating, glass-surfaced widgets rather than a fixed grid — weather, finance, health, focus timer, music player, and calendar all coexist as independent panels.
+## Tech Stack
 
-<br/>
+| Area | Technology |
+| --- | --- |
+| Framework | Next.js 16 (App Router), React 19, TypeScript |
+| Styling | Tailwind CSS v4 (`@theme` tokens in `styles/globals.css`), `clsx`, `tailwind-merge` |
+| Motion | Framer Motion, GSAP (cinematic moments only) |
+| UI | Lucide icons, Recharts, `@radix-ui/react-slot` |
+| Tooling | Prettier (with Tailwind plugin), `sharp` and `png-to-ico` for icon generation |
 
-## Widgets
-
-| Widget | Purpose |
-|:--|:--|
-| `GreetingCard` | Time-aware greeting |
-| `WeatherWidget` / `WeatherPageContent` | Current conditions and a dedicated weather view |
-| `FinanceSnapshot` | At-a-glance financial summary |
-| `HealthSnapshot` | Health metrics summary |
-| `FocusTimer` | Focus/pomodoro-style timer |
-| `MusicPlayer` | In-workspace music controls |
-| `CalendarTimeline` | Timeline view of upcoming events |
-| `AIInsightWidget` | AI-generated insight surface |
-
-<br/>
-
-## Animations
-
-Motion is split across two engines: **Framer Motion** for component-level transitions and **GSAP** for more complex sequenced animation.
-
-<br/>
-
-## Glass UI
-
-Built on Radix UI primitives with a glassmorphic visual language throughout — translucent panels, soft depth, and a system-style notification center (`components/system`).
-
-<br/>
-
-## Components
-
-`components/` is organized by domain: `ai`, `branding`, `command` (command palette), `empty-states`, `layout`, `loading`, `motion`, `onboarding`, `providers`, `system` (notifications/toasts), `ui`, `widgets`, `workspace`.
-
-<br/>
-
-## Folder Structure
+## Project Structure
 
 ```
 orbit-os/
 ├── app/
-│   ├── (orbit)/
-│   │   ├── ai/
+│   ├── (orbit)/            # Shell-wrapped routes
 │   │   ├── dashboard/
+│   │   ├── ai/             # chat/, voice/
 │   │   ├── weather/
-│   │   └── workspace/
-│   └── onboarding/
+│   │   └── workspace/      # notes/, files/, projects/
+│   ├── onboarding/
+│   └── page.tsx
 ├── components/
-│   ├── ai/
-│   ├── command/
-│   ├── system/          # notifications, toasts
-│   ├── widgets/          # weather, finance, health, focus, music, calendar, AI insight
-│   ├── workspace/
-│   └── ui/
+│   ├── layout/             # AppShell, Sidebar, Topbar, PageTransition
+│   ├── ui/                 # Primitives: GlassSurface, Button, Card, Input, ...
+│   ├── widgets/            # Dashboard widgets
+│   ├── ai/  command/  workspace/  system/  motion/  ...
 ├── lib/
-├── docs/
-└── scripts/
+│   ├── constants/          # Commands, notifications, onboarding, theme data
+│   ├── hooks/              # useCommandPalette
+│   └── skycast/            # Weather client, parsers, mock data
+├── styles/                 # globals.css plus colour, motion, radius, shadow and spacing tokens
+├── public/                 # Branding assets, web manifest
+├── scripts/                # generate-icons.mjs
+└── docs/                   # design-bible.md, branding.md
 ```
 
-<br/>
+## Getting Started
 
-## Tech Stack
-
-`Next.js 16` · `React 19` · `TypeScript` · `Framer Motion` · `GSAP` · `Recharts` · `Radix UI` · `Tailwind CSS 4`
-
-<br/>
-
-## Setup
+Requires Node.js and npm.
 
 ```bash
 git clone https://github.com/Samudra-GITHub/orbit-os.git
 cd orbit-os
 npm install
-npm run dev
+npm run dev        # http://localhost:3000
 ```
 
-No environment variables required.
+Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
-<br/>
+## Configuration
 
-## Roadmap
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `OPENWEATHER_API_KEY` | No | Live weather data. Without it the weather widget and page use mock data. |
 
-- [x] Floating widget desktop with glassmorphic UI
-- [x] Weather, finance, health, focus, music, and calendar widgets
-- [x] Notification center and command palette
-- [x] Onboarding flow
-- [ ] Persistent workspace layouts
-- [ ] Real data connections for finance/health widgets
+Copy `.env.example` to `.env.local` to set it.
 
-<br/>
+## Architecture
+
+Every route under `app/(orbit)/` shares one layout built on `AppShell` (sidebar, topbar, page transitions). Design tokens live in `styles/` and the Tailwind `@theme` block, and components consume tokens instead of hardcoded colors. The weather layer in `lib/skycast/` decides between a live OpenWeatherMap call (revalidated every 10 minutes) and mock data in one place, so widgets don't need to know which they received.
+
+The design and engineering rules are written down in [docs/design-bible.md](docs/design-bible.md).
+
+## Deployment
+
+No deployment configuration is included. It is a standard Next.js app, so `npm run build` followed by `npm run start` serves it.
+
+## Screenshots
+
+`assets/` contains only placeholder graphics, so no screenshots are shown.
+
+## Future Improvements
+
+- Persistent workspace layouts
+- Real data connections for the finance and health widgets
+- Replace placeholder screenshots with real captures
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
-
-<br/>
-
-<sub>Part of the Sams Studio product ecosystem. See the [profile](https://github.com/Samudra-GITHub) for the full lineup.</sub>
+MIT, see [LICENSE](LICENSE).
