@@ -26,6 +26,22 @@ Orbit OS is an interface exploration, not a real OS. It asks what a personal das
 
 Most data is mocked. Only the weather views can call a live API.
 
+## Preview
+
+<p align="center">
+  <img src="docs/screenshots/desktop-dashboard.webp" width="880" alt="Orbit OS dashboard: greeting card, weather, focus timer, timeline and finance widgets" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/command-palette.gif" width="640" alt="Opening the command palette and searching for weather" />
+  <br />
+  <sub>The command palette, recorded from the running app. Dashboard data and AI replies are mock data.</sub>
+</p>
+
+| AI chat | Workspace projects | Onboarding |
+| :-- | :-- | :-- |
+| <img src="docs/screenshots/desktop-ai-chat.webp" width="290" alt="AI chat with inline calendar and weather cards" /> | <img src="docs/screenshots/desktop-workspace.webp" width="290" alt="Kanban project board" /> | <img src="docs/screenshots/desktop-onboarding.webp" width="290" alt="Onboarding welcome screen" /> |
+
 ## Features
 
 - **Dashboard** of independent glass widgets: greeting, weather, finance, health, focus timer, music player, calendar timeline and an AI insight card
